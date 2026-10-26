@@ -1,0 +1,19 @@
+# ==============================================================================
+# 🛰️          FITS Pipeline Workshop:
+# Release Profile: Modern 2026 Production Environment
+# System Platform: Arch Linux Core Cluster Framework
+# ==============================================================================
+
+# Core Computational & Modern Data Matrix Elements
+numpy>=2.5.3
+
+# Space Telescope Astrometric & Metadata Engines
+astropy>=8.0.1
+astroquery>=0.4.11
+
+# Scientific Graphics & Manuscript Diagnostic Vector Engines
+matplotlib>=3.11.2
+
+# Interactive Notebook Development & Diagnostics Tracking
+notebook>=7.2.0
+ipykernel>=6.29.0
