@@ -13,14 +13,14 @@ case "$1" in
 
     --private|-private)
         echo "Starting up private network..."
-        jupyter notebook --ip=192.168.2.157 --port 4001
+        jupyter notebook --ip=192.168.2.158 --port 4001
         ;;
 
     --all|-all)
         echo "Starting up both networks..."
         jupyter notebook create_fits_image.ipynb &
         sleep 2
-        jupyter notebook --ip=192.168.2.157 --port 4001
+        jupyter notebook --ip=192.168.2.158 --port 4001
         ;;
 
     *)

@@ -27,7 +27,7 @@ for hdu in hdul:
     hdu.add_checksum()
 
 # 6. Commit payload directly to file disk
-output_filename = "demo_table.fits"
+output_filename = "data/demo_table.fits"
 hdul.writeto(output_filename, overwrite=True)
 
 print(f"Successfully generated binary table file '{output_filename}' passing strict validation!")

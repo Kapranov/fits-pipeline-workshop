@@ -17,7 +17,7 @@ hdu.header["EXPOSURE"] = (1500, "Total Exposure Time")
 hdu.add_checksum()
 
 # 5. Commit payload safely to disk
-output_filename = "demo_image.fits"
+output_filename = "data/demo_image.fits"
 hdu.writeto(output_filename, overwrite=True)
 
 print(f"File successfully saved with computed internal verification checksums!")

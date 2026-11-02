@@ -11,4 +11,4 @@ hdu = fits.PrimaryHDU(data=empty_data)
 hdu.add_checksum()
 
 # Save the file
-hdu.writeto('empty_image.fits', overwrite=True)
+hdu.writeto('data/empty_image.fits', overwrite=True)

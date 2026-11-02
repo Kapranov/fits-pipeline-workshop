@@ -42,7 +42,7 @@ for hdu in hdul:
     hdu.add_checksum()
 
 # 6. Commit the heavy payload to disk
-output_filename = "demo_large_table.fits"
+output_filename = "data/demo_large_table.fits"
 hdul.writeto(output_filename, overwrite=True)
 
 print(f"Successfully generated a matrix of {num_rows} rows by {num_cols} columns!")

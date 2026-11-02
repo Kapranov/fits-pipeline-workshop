@@ -2,7 +2,7 @@ from pathlib import Path
 import astropy.io.fits as fits
 
 # 1. Define the directory path containing your FITS files
-fits_directory = Path(".")
+fits_directory = Path("./data")
 
 # Find all FITS files matching extensions: .fits, .fit, or .fts
 fits_files = list(fits_directory.glob("*.fit*"))
