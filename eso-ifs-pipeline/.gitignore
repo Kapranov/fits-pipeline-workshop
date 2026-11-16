@@ -1,0 +1,73 @@
+# ==========================================
+# Pipeline Output Directories & Data Files
+# ==========================================
+pipeline_outputs/
+batch_survey/
+ngc253_results/
+data/
+figures/
+tables/
+
+# Large Astronomical FITS & Batch Manifests
+*.fits
+*.fit
+*.fts
+*.fits.gz
+targets.csv
+
+# ==========================================
+# Credentials & Local Secrets
+# ==========================================
+.env
+*token*
+*.pem
+*.key
+
+# ==========================================
+# Python & Virtual Environments
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+astro_env/
+.venv/
+
+# ==========================================
+# Jupyter Notebooks & IDEs
+# ==========================================
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ==========================================
+# OS-Specific Metadata
+# ==========================================
+.DS_Store
+Thumbs.db
+desktop.ini
