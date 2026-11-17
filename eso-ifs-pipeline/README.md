@@ -1,3 +1,6 @@
+[![License: MIT](https://shields.io)](https://opensource.org)
+[![Python 3.10+](https://shields.io)](https://python.org)
+
 # ESO IFS Kinematic & Dust-Extinction Pipeline (`eso_ifs_pipeline.py`)
 
 An end-to-end, automated Python command-line pipeline for querying, downloading, and analyzing Integral Field Spectroscopy (IFS) 3D data cubes (such as VLT/MUSE) from the **ESO Science Archive**.
@@ -38,7 +41,7 @@ If querying proprietary ESO archive datasets, obtain your `id_token` from the ES
 
 ## Complete CLI Parameter Reference
 
-`python3 eso_ifs_pipeline.py` supports 13 command-line flags across two mutually exclusive execution modes:
+`python eso_ifs_pipeline.py` supports 13 command-line flags across two mutually exclusive execution modes:
 Single-Target Mode (`--target` + `--dp-id`) and Batch Manifest Mode (`--batch-csv`).
 
 | Flag | Type | Default | Required? | Description & Example Value |
@@ -64,12 +67,12 @@ Single-Target Mode (`--target` + `--dp-id`) and Batch Manifest Mode (`--batch-cs
 
 ```
 export ESO_ID_TOKEN="eyJhbGciOiJSUzI1NiIs..."
-python3 eso_ifs_pipeline.py --help
+python eso_ifs_pipeline.py --help
 ```
 
 ### 1. Single-Target Run (with Redshift, Distance, $A_V$ Cap & LaTeX Export)
 ```bash
-python3 eso_ifs_pipeline.py \
+python eso_ifs_pipeline.py \
     --target "NGC253" \
     --dp-id "ADP.2025-07-06T07:52:11.871" \
     --z 0.000811 \
@@ -82,7 +85,7 @@ python3 eso_ifs_pipeline.py \
 ```bash
 export ESO_ID_TOKEN="eyJhbGciOiJSUzI1NiIs..."
 
-python3 eso_ifs_pipeline.py \
+python eso_ifs_pipeline.py \
     --target "NGC253" \
     --dp-id "ADP.2025-07-06T07:52:11.871" \
     --ra 11.888058 \
@@ -99,7 +102,7 @@ python3 eso_ifs_pipeline.py \
 ### 3. Re-Running on Cached Cutouts
 Once `<prefix>_ha_soda_cutout.fits` and `<prefix>_hb_soda_cutout.fits` are saved in `<outdir>/data/`, subsequent runs automatically reuse the cached cubes unless `--force-download` is specified:
 ```bash
-python3 eso_ifs_pipeline.py \
+python eso_ifs_pipeline.py \
     --target "NGC253" \
     --dp-id "ADP.2025-07-06T07:52:11.871" \
     --z 0.000811 \
@@ -119,15 +122,158 @@ NGC1365,ADP.2020-04-28T13:45:12.123,,,,17.3,12.0
 M83,ADP.2021-09-14T08:11:44.500,,,,,10.0
 ```
 
-Execute the batch survey with combined CSV and LaTeX manuscript table generation:
+### 5. Execute the batch survey with combined CSV and LaTeX manuscript table generation:
 ```bash
-python3 eso_ifs_pipeline.py \
+python eso_ifs_pipeline.py \
     --batch-csv targets.csv \
     --snr 5.0 \
     --max-av 6.0 \
     --export-latex \
     --outdir "batch_survey"
 ```
+
+
+### 6. Execute CSV to TeX to format the table specifically for AAS Journals (ApJ / AJ) using AASTeX:
+
+```
+python -c 'from eso_ifs_pipeline import export_summary_to_latex; export_summary_to_latex("pipeline_outputs/tables/ngc253_kinematic_summary.csv", "pipeline_outputs/tables/ngc253_kinematic_summary.tex")'
+
+```
+
+### 7. How to run it on any galaxy
+
+```
+bash> export ESO_ID_TOKEN="eyJhbGciOiJSUzI1NiIs..."
+
+python eso_ifs_pipeline.py --target "NGC253" --list-only
+python eso_ifs_pipeline.py --target "NGC253" --list-only --list-out ngc253_cubes.txt
+python eso_ifs_pipeline.py --target "NGC253" --pp-id "1100.B-0651" --instrument "MUSE"
+python eso_ifs_pipeline.py --target "NGC253" --pp-id "1100.B-0651" --instrument "MUSE" --list-only
+python eso_ifs_pipeline.py --target "NGC253" --dp-id "ADP.2025-07-06T07:52:11.871"
+python eso_ifs_pipeline.py --target "NGC253" --dp-id "ADP.2025-07-06T07:52:11.871" --z 0.000811 --radius 60.0 --dist-mpc 9.5 --max-av 10.0 --export-latex
+python eso_ifs_pipeline.py --target "NGC253" --dp-id "ADP.2025-07-06T07:52:11.871" --z 0.000811 --dist-mpc 3.5 --pa 52.0 --inc 78.0 --radial-bin 2.0 --radius 60.0 --max-av 10.0 --export-latex
+
+Target Resolved: NGC253 | RA=11.888058 deg, DEC=-25.288800 deg, z=0.000811
+-> Spatial pixel area: 0.0400 arcsec^2 / spaxel
+-> CCM89 Extinction (N=83582 Balmer spaxels): Median E(B-V) = 0.810 mag | Median A_V = 2.511 ± 0.320 mag | Capped 309 spaxels at A_V <= 10.0 mag
+Saved 3-panel CCM89 dust diagnostic figure: pipeline_outputs/figures/ngc253_ccm89_dust_extinction.png
+-> Luminosity Distance D_L = 3.500 Mpc (4*pi*D_L^2 = 1.466e+51 cm^2)
+-> HII_Starburst (N=102530): L_Ha(corr) = 8.337e+40 ± 4.560e+38 erg/s | SFR(corr) = 0.4477 ± 0.0024 Msun/yr (A_V=2.40 mag)
+-> Composite_Interface (N=160897): L_Ha(corr) = 3.644e+41 ± 4.413e+39 erg/s | SFR(corr) = 1.9566 ± 0.0237 Msun/yr (A_V=2.63 mag)
+-> Shock_Outflow (N=66446): L_Ha(corr) = 4.116e+41 ± 4.007e+39 erg/s | SFR(corr) = 2.2105 ± 0.0215 Msun/yr (A_V=3.65 mag)
+Exported CSV summary with Luminosity & SFR: pipeline_outputs/tables/ngc253_kinematic_summary.csv
+Exported 11-extension MEF FITS (10**(-20) erg / (s cm**2 arcsec**2)): pipeline_outputs/data/ngc253_kinematics_mef.fits
+Filename: (No file associated with this HDUList)
+No.    Name      Ver    Type      Cards   Dimensions   Format
+  0  PRIMARY       1 PrimaryHDU       6   ()
+  1  HALPHA_SB     1 ImageHDU        34   (600, 600)   float32
+  2  HALPHA_FLUX    1 ImageHDU        34   (600, 600)   float32
+  3  HALPHA_MOM1    1 ImageHDU        34   (600, 600)   float32
+  4  HALPHA_MOM2    1 ImageHDU        34   (600, 600)   float32
+  5  NII6583_SB    1 ImageHDU        34   (600, 600)   float32
+  6  NII6583_FLUX    1 ImageHDU        34   (600, 600)   float32
+  7  NII_HA_RATIO    1 ImageHDU        34   (600, 600)   float32
+  8  LOG_NII_HA    1 ImageHDU        34   (600, 600)   float32
+  9  EXCITATION_MASK    1 ImageHDU        38   (600, 600)   int16
+ 10  HALPHA_FLUX_CORR    1 ImageHDU        34   (600, 600)   float32
+ 11  BALMER_DEC    1 ImageHDU        34   (600, 600)   float32
+ 12  EBV_CCM89     1 ImageHDU        34   (600, 600)   float32
+ 13  AV_CCM89      1 ImageHDU        34   (600, 600)   float32
+ 14  AV_CCM89_ERR    1 ImageHDU        34   (600, 600)   float32
+ 15  KINEMATIC_SUMMARY    1 BinTableHDU    111   3R x 39C   ['6A', 'D', 'D', 'K', '19A', 'K', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D']
+
+--- Extracting Deprojected Galactocentric Radial Profiles ---
+Exported radial profile CSV (143 annuli): pipeline_outputs/tables/ngc253_radial_profiles.csv
+Saved 4-panel radial profile figure: pipeline_outputs/figures/ngc253_radial_profiles.png (300 DPI)
+Appended 'RADIAL_PROFILES' extension to MEF FITS: pipeline_outputs/data/ngc253_kinematics_mef.fits
+Exported publication-ready LaTeX table: pipeline_outputs/tables/ngc253_kinematic_summary.tex
+Exported AASTeX radial profile table to: pipeline_outputs/tables/ngc253_radial_profiles.tex
+
+Pipeline execution finished successfully!
+```
+
+```
+bash> export ESO_ID_TOKEN="eyJhbGciOiJSUzI1NiIs..."
+
+python eso_ifs_pipeline.py --target "M83" --list-only
+python eso_ifs_pipeline.py --target "M83" --list-only --list-out m83_cubes.txt
+python eso_ifs_pipeline.py --target "M83" --radius 12 --outdir results_m83
+python eso_ifs_pipeline.py --target "M83" --dp-id "ADP.2019-06-25T17:20:12.161" --z 0.001711 --dist-mpc 4.61 --radius 45 --snr 10.0 --force-download --outdir results_m83
+python eso_ifs_pipeline.py --target "M83" --dp-id "ADP.2019-06-25T17:20:12.161" --z 0.001711 --dist-mpc 4.61 --pa 225.0 --inc 24.0 --radial-bin 1.5 --radius 45 --snr 10.0 --outdir results_m83
+python eso_ifs_pipeline.py --target "M83" --dp-id "ADP.2019-06-25T17:20:12.161" --z 0.001711 --dist-mpc 4.61 --pa 225.0 --inc 24.0 --radial-bin 1.5 --radius 45 --snr 10.0 --outdir results_m83
+
+Target Resolved: M83 | RA=204.253830 deg, DEC=-29.865761 deg, z=0.001711
+-> Spatial pixel area: 0.0400 arcsec^2 / spaxel
+-> CCM89 Extinction (N=17739 Balmer spaxels): Median E(B-V) = 0.678 mag | Median A_V = 2.102 ± 0.120 mag
+Saved 3-panel CCM89 dust diagnostic figure: results_m83/figures/m83_ccm89_dust_extinction.png
+-> Luminosity Distance D_L = 4.610 Mpc (4*pi*D_L^2 = 2.543e+51 cm^2)
+-> HII_Starburst (N=21211): L_Ha(corr) = 1.015e+41 ± 1.240e+38 erg/s | SFR(corr) = 0.5452 ± 0.0007 Msun/yr (A_V=2.00 mag)
+-> Composite_Interface (N=14940): L_Ha(corr) = 7.252e+40 ± 1.550e+38 erg/s | SFR(corr) = 0.3894 ± 0.0008 Msun/yr (A_V=2.99 mag)
+-> Shock_Outflow (N=1218): L_Ha(corr) = 1.095e+39 ± 3.878e+36 erg/s | SFR(corr) = 0.0059 ± 0.0000 Msun/yr (A_V=0.00 mag)
+Exported CSV summary with Luminosity & SFR: results_m83/tables/m83_kinematic_summary.csv
+Exported 11-extension MEF FITS (10**(-20)*erg/s/cm**2 arcsec**(-2)): results_m83/data/m83_kinematics_mef.fits
+Filename: (No file associated with this HDUList)
+No.    Name      Ver    Type      Cards   Dimensions   Format
+  0  PRIMARY       1 PrimaryHDU       6   ()
+  1  HALPHA_SB     1 ImageHDU        31   (323, 314)   float32
+  2  HALPHA_FLUX    1 ImageHDU        31   (323, 314)   float32
+  3  HALPHA_MOM1    1 ImageHDU        31   (323, 314)   float32
+  4  HALPHA_MOM2    1 ImageHDU        31   (323, 314)   float32
+  5  NII6583_SB    1 ImageHDU        31   (323, 314)   float32
+  6  NII6583_FLUX    1 ImageHDU        31   (323, 314)   float32
+  7  NII_HA_RATIO    1 ImageHDU        31   (323, 314)   float32
+  8  LOG_NII_HA    1 ImageHDU        31   (323, 314)   float32
+  9  EXCITATION_MASK    1 ImageHDU        35   (323, 314)   int16
+ 10  HALPHA_FLUX_CORR    1 ImageHDU        31   (323, 314)   float32
+ 11  BALMER_DEC    1 ImageHDU        31   (323, 314)   float32
+ 12  EBV_CCM89     1 ImageHDU        31   (323, 314)   float32
+ 13  AV_CCM89      1 ImageHDU        31   (323, 314)   float32
+ 14  AV_CCM89_ERR    1 ImageHDU        31   (323, 314)   float32
+ 15  KINEMATIC_SUMMARY    1 BinTableHDU    111   3R x 39C   ['3A', 'D', 'D', 'K', '19A', 'K', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D']
+
+--- Extracting Deprojected Galactocentric Radial Profiles ---
+Exported radial profile CSV (28 annuli): results_m83/tables/m83_radial_profiles.csv
+Saved 4-panel radial profile figure: results_m83/figures/m83_radial_profiles.png (300 DPI)
+Appended 'RADIAL_PROFILES' extension to MEF FITS: results_m83/data/m83_kinematics_mef.fits
+
+Pipeline execution finished successfully!
+
+python -c 'from eso_ifs_pipeline import export_summary_to_latex; export_summary_to_latex("results_m83/tables/m83_kinematic_summary.csv", "results_m83/tables/m83_kinematic_summary.tex")'
+```
+
+```
+(python astro_env) bash> python
+
+from astropy.io import fits
+
+with fits.open("pipeline_outputs/data/ngc253_kinematics_mef.fits") as check_hdul:
+    check_hdul.info()
+```
+
+The **M83** run succeeded cleanly with zero warnings, exporting the 15-extension
+**WCS**-calibrated **MEF FITS** file (`results_m83/data/m83_kinematics_mef.fits`),
+the  39-column summary CSV, and the CCM89 Balmer  decrement dust diagnostic figure.
+
+**Scientific Highlights from Your M83 Run (`z = 0.001711`, `D_L = 4.61 Mpc`)**
+
+* Balmer Decrement Dust Extinction (`N = 17,739 spaxels`):
+    - Median Color Excess: `E(B-V) = 0.678 mag`
+    - Median Visual Extinction: `A_V = 2.102 ± 0.120 mag`, matching literature
+      measurements for the dusty circumnuclear starburst ring in M83.
+* Dust-Corrected Star Formation Rates by Excitation Regime:
+    - Class 1 (`HII_Starburst`, `N = 21,211 spaxels`):
+      `L_Ha(corr) = 1.015 × 10^41 ± 1.240 × 10^38 erg/s` →
+      `SFR(corr) = 0.5452 ± 0.0007 M_sun/yr` (`A_V = 2.00 mag`).
+    - Class 2 (`Composite_Interface`, `N = 14,940 spaxels`):
+      `L_Ha(corr) = 7.252 × 10^40 ± 1.550 × 10^38 erg/s` →
+      `SFR(corr) = 0.3894 ± 0.0008 M_sun/yr` (`A_V = 2.99 mag`).
+    - Class 3 (`Shock_Outflow`, `N = 1,218 spaxels`):
+      `L_Ha(corr) = 1.095 × 10^39 ± 3.878 × 10^36 erg/s` (uncorrected lower
+      limit `A_V = 0.00` mag where faint `Hβ` falls below `SNR = 10` in extended
+      diffuse/shock regions).
+* Total Nuclear Starburst Ring SFR: Combining the star-forming and composite ring
+  regions yields `~ 0.935 M_sun/yr` within the central `R = 45"` (`~ 1.0 kpc`)
+  nuclear zone.
 
 ---
 
@@ -197,50 +343,10 @@ requests>=2.28.0
 bash> pip install -r requirements.txt
 ```
 
-```
-(python astro_env) bash> python eso_ifs_pipeline.py --target "NGC253" --dp-id "ADP.2025-07-06T07:52:11.871" --z 0.000811 --radius 60.0 --dist-mpc 9.5  --max-av 10.0  --export-latex
-Target Resolved: NGC253 | RA=11.888058 deg, DEC=-25.288800 deg, z=0.000811
-Paste verified ESO id_token:
-Downloaded SODA cutout: pipeline_outputs/data/ngc253_ha_soda_cutout.fits
-Downloaded SODA cutout: pipeline_outputs/data/ngc253_hb_soda_cutout.fits
--> Spatial pixel area: 0.0400 arcsec^2 / spaxel
--> CCM89 Extinction (N=83582 Balmer spaxels): Median E(B-V) = 0.810 mag | Median A_V = 2.511 ± 0.320 mag | Capped 309 spaxels at A_V <= 10.0 mag
-Saved 3-panel CCM89 dust diagnostic figure: pipeline_outputs/figures/ngc253_ccm89_dust_extinction.png
--> Luminosity Distance D_L = 9.500 Mpc (4*pi*D_L^2 = 1.080e+52 cm^2)
--> HII_Starburst (N=102530): L_Ha(corr) = 6.142e+41 ± 3.359e+39 erg/s | SFR(corr) = 3.2985 ± 0.0180 Msun/yr (A_V=2.40 mag)
--> Composite_Interface (N=160897): L_Ha(corr) = 2.684e+42 ± 3.251e+40 erg/s | SFR(corr) = 14.4151 ± 0.1746 Msun/yr (A_V=2.63 mag)
--> Shock_Outflow (N=66446): L_Ha(corr) = 3.033e+42 ± 2.952e+40 erg/s | SFR(corr) = 16.2858 ± 0.1585 Msun/yr (A_V=3.65 mag)
-Exported CSV summary with Luminosity & SFR: pipeline_outputs/tables/ngc253_kinematic_summary.csv
-Exported 11-extension MEF FITS (10**(-20) erg / (s cm**2 arcsec**2)): pipeline_outputs/data/ngc253_kinematics_mef.fits
-Filename: (No file associated with this HDUList)
-No.    Name      Ver    Type      Cards   Dimensions   Format
-  0  PRIMARY       1 PrimaryHDU       6   ()
-  1  HALPHA_SB     1 ImageHDU        34   (600, 600)   float32
-  2  HALPHA_FLUX    1 ImageHDU        34   (600, 600)   float32
-  3  HALPHA_MOM1    1 ImageHDU        34   (600, 600)   float32
-  4  HALPHA_MOM2    1 ImageHDU        34   (600, 600)   float32
-  5  NII6583_SB    1 ImageHDU        34   (600, 600)   float32
-  6  NII6583_FLUX    1 ImageHDU        34   (600, 600)   float32
-  7  NII_HA_RATIO    1 ImageHDU        34   (600, 600)   float32
-  8  LOG_NII_HA    1 ImageHDU        34   (600, 600)   float32
-  9  EXCITATION_MASK    1 ImageHDU        38   (600, 600)   int16
- 10  HALPHA_FLUX_CORR    1 ImageHDU        34   (600, 600)   float32
- 11  BALMER_DEC    1 ImageHDU        34   (600, 600)   float32
- 12  EBV_CCM89     1 ImageHDU        34   (600, 600)   float32
- 13  AV_CCM89      1 ImageHDU        34   (600, 600)   float32
- 14  AV_CCM89_ERR    1 ImageHDU        34   (600, 600)   float32
- 15  KINEMATIC_SUMMARY    1 BinTableHDU    111   3R x 39C   ['6A', 'D', 'D', 'K', '19A', 'K', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D', 'D']
-Exported publication-ready LaTeX table: pipeline_outputs/tables/ngc253_kinematic_summary.tex
+---
 
-Pipeline execution finished successfully!
-```
+## License
 
-
-```
-from astropy.io import fits
-
-with fits.open("pipeline_outputs/data/ngc253_kinematics_mef.fits") as check_hdul:
-    check_hdul.info()
-```
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ### 15 Nov 2026 by Oleg G.Kapranov
