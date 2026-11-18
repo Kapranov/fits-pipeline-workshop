@@ -350,3 +350,10 @@ bash> pip install -r requirements.txt
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ### 15 Nov 2026 by Oleg G.Kapranov
+
+[1]: https://archive.eso.org/programmatic/#VOSTD
+[2]: https://archive.eso.org/cms/eso-data/programmatic-access.html
+[3]: https://archive.eso.org/cms/eso-data/programmatic-access/authentication-and-authorisation.html
+[4]: https://archive.eso.org/programmatic/HOWTO/
+[5]: https://archive.eso.org/programmatic/HOWTO/jupyter/
+[6]: https://www.ivoa.net/documents/SODA/20170517/REC-SODA-1.0.html
